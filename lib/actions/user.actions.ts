@@ -2,6 +2,7 @@
 
 import { clerkClient } from "@clerk/nextjs/server";
 import { parseStringify } from "../utils";
+import { liveblocks } from "../liveblocks";
 
 
 export const getClerkUsers = async ({userIds}: {userIds: string[]}) => {
@@ -22,5 +23,26 @@ export const getClerkUsers = async ({userIds}: {userIds: string[]}) => {
     return parseStringify(sortedUsers);
   } catch (error) {
     console.log(`Error happened while fetching users: ${error}`);  
+  }
+}
+
+export const getDocumentUsers = async ({roomId, currentUser, text}: {roomId: string, currentUser: string, text: string}): Promise<string[]> => {
+  try {
+    const room = await liveblocks.getRoom(roomId);
+
+    const users = Object.keys(room.usersAccesses).filter((email) => email !== currentUser);
+
+    let filteredUsers: string[] = []
+
+    if (text.length) {
+      const lowerCaseText = text.toLowerCase();
+      
+      filteredUsers = users.filter((email) => email.toLowerCase().includes(lowerCaseText));
+    }
+
+    return parseStringify(filteredUsers);
+  } catch (error) {
+    console.log(`Error happened while fetching users: ${error}`);
+    return parseStringify([]);
   }
 }

@@ -20,7 +20,9 @@ const Documents = async ({ params: { id } }: SearchParamProps) => {
   const userIds = Object.keys(room.usersAccesses)
   const users = await getClerkUsers({ userIds })
 
-  const usersData = users?.map((user: User) => {
+  
+
+  let usersData = users?.map((user: User) => {
     const hasWriteAccess = room.usersAccesses[user.email]?.some(
       (access) => access === 'room:write'
     )
@@ -29,6 +31,10 @@ const Documents = async ({ params: { id } }: SearchParamProps) => {
       userType: hasWriteAccess ? 'editor' : 'viewer',
     } as User
   })
+
+  if (!usersData) {
+    usersData = []
+  }
 
   const currentUserType = room.usersAccesses[
     clerkUser.emailAddresses[0].emailAddress
@@ -40,7 +46,7 @@ const Documents = async ({ params: { id } }: SearchParamProps) => {
     <main className="flex w-full flex-col items-center">
       <CollaborativeRoom
         roomId={id}
-        roomMetadata={room.metadata}
+        roomMetadata={room.metadata as RoomMetadata}
         users={usersData}
         currentUserType={currentUserType}
       />

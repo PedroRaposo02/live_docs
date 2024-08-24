@@ -23,7 +23,7 @@ export const createDocument = async ( {userId, email}: CreateDocumentParams) => 
     return acc;
   }, {});
 
-  /* const usersAccesses: RoomAccesses = {
+  /* const usersAccesses: RoomAccesses = {1
     [email]: ['room:write']
   } */
 
